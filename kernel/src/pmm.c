@@ -1,5 +1,6 @@
 #include "pmm.h"
 #include "util.h"
+#include "term.h"
 
 static uint32_t * pmm_bitmap;
 static uint32_t pmm_bitmap_size;
@@ -177,16 +178,46 @@ void pmm_free_page(void * page)
 	pmm_bitmap[bm_index] |= (1 << bm_bitindex);
 }
 
-void pmm_show_bitmap(const uint32_t start, const uint32_t limit) 
+void pmm_show_bitmap(uint32_t start, uint32_t limit) 
 {
-	uint32_t i;
+	uint32_t i, tmp;
+	int j, idx;
+	
+	const char charset[] = "fedcba9876543210";
+		
+	if (limit > pmm_bitmap_size || limit == 0)
+		limit = pmm_bitmap_size;
 
-	vk_printf("\nphysmap pages 0x%08x - 0x%08x\n", start, start+limit);
+	vk_printf("\nphysmap pages 0x%08x - 0x%08x\n", start * PMM_PAGE_SIZE * sizeof(uint32_t) * 8, (start + limit) * PMM_PAGE_SIZE * sizeof(uint32_t) * 8);
 
-	for (i = start; i < (start+limit); i++) {
-		if ((i&3) == 0) 
-			vk_printf("%08x: ", i * PMM_PAGE_SIZE * sizeof(uint32_t) * 8 * 4);
-		vk_printf("%08x%c", pmm_bitmap[i], (i+1)&3 ? ' ' : '\n');
+	for (i = start; i < limit; i++) {
+
+		if ((i&7) == 0) {
+			term_setcolor(7, 0);
+			vk_printf("\n%08x: ", i * PMM_PAGE_SIZE * sizeof(uint32_t) * 8);
+		}
+		
+		tmp = pmm_bitmap[i];
+		for (j = 0; j < 8; j++) {
+			idx = tmp & 0xf;
+			switch (idx) {
+			case 15:
+				term_setcolor(10, 0);
+				break;
+			case 0: 
+				term_setcolor(12, 0);
+				break;
+			default:
+				term_setcolor(14, 0);
+				break;
+			}
+			vk_printf("%c", charset[idx]);
+			tmp >>= 4;
+		}
+			
+		
 	}
+	term_setcolor(7, 0);
+	vk_printf("\n");
 }
 

@@ -1,9 +1,13 @@
 #!/bin/bash
 GRUBCFG="iso/boot/grub/grub.cfg"
-echo 'menuentry "vloOS" {' > $GRUBCFG
+mkdir -p iso/boot/grub
+echo 'menuentry "vlOS" {' > $GRUBCFG
 echo '	multiboot /boot/kernel.bin' >> $GRUBCFG
-for I in *.elf; do 
-	cp $I iso/boot/$I
-	echo "	module /boot/$I $I" >> $GRUBCFG 
+cp kernel.bin iso/boot/
+for I in $(ls testtask/*.elf); do 
+	FN=$(basename $I)
+	cp $I iso/boot/$FN
+	echo "	module /boot/$FN $FN" >> $GRUBCFG 
 done
 echo '}' >> $GRUBCFG
+grub-mkrescue -d /usr/lib/grub/i386-pc/ -o image.iso iso/

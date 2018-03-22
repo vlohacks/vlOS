@@ -19,7 +19,5 @@ A kernel writing adventure for fun and ~~profit~~ education
 - set up a baremetal gcc/binutils toolchain (details coming soon)
 - set up TOOLCHAIN variable in kernel/Makefile and testtask/Makefile to point to toolchain
 - run `make iso` to build iso
-- rum `make run` to instantly run the iso in QEMU
-
-
+- run `make run` to instantly run the iso in QEMU
 

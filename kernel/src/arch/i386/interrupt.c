@@ -148,7 +148,7 @@ struct cpu_state * interrupt_handle(struct cpu_state * cpu)
 			}
 			
 			if (x == 136) {
-				pmm_show_bitmap(0, 64);
+				pmm_show_bitmap(0, 0);
 			}
 
 			if (x == 137) {

@@ -17,6 +17,6 @@ $(TESTPROGS): %: src/%.c
 	$(TOOLCHAIN)/$(LD) $(LDFLAGS) -o $@.elf $@.o
 	
 clean:
-	rm -f $(OBJS) $(TESTPROGS_BIN)
+	rm -f *.elf *.o
 
 .PHONY: clean
