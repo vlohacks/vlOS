@@ -1,27 +1,27 @@
 KERNEL_DIR		= kernel
-TESTTASK_DIR	= testtask
+USERLAND_DIR	= userland
 
 .PHONY: kernel
-.PHONY: testtask
+.PHONY: userland
 
 
 kernel: 
 	$(MAKE) -C $(KERNEL_DIR)
 	cp $(KERNEL_DIR)/kernel.bin .
 	
-testtask:
-	$(MAKE) -C $(TESTTASK_DIR)
+userland:
+	$(MAKE) -C $(USERLAND_DIR)
 
-iso: kernel testtask
+iso: kernel userland
 	./setup_iso.sh	
 
-run: kernel testtask iso
-	qemu-system-i386 -m 8M -soundhw ac97 -cdrom image.iso
+run: kernel userland iso
+	qemu-system-i386 -D ./qemu.log -d cpu_reset -m 8M -soundhw ac97 -cdrom image.iso
 	#qemu-system-i386 -kernel kernel.bin
 
 clean:
 	$(MAKE) -C $(KERNEL_DIR) clean
-	$(MAKE) -C $(TESTTASK_DIR) clean
+	$(MAKE) -C $(USERLAND_DIR) clean
 	rm -f kernel.bin
 	rm -fr iso
 	rm -f image.iso
